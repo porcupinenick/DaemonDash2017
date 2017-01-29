@@ -1,0 +1,75 @@
+---
+title: "FindYourFood"
+author: "Oscar Lomibao Jr. and more"
+date: "January 29, 2017"
+output: html_document
+---
+
+
+---
+title: "visulization"
+author: "Jaya Chandar Payyavula"
+date: "January 29, 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r,library}
+library(tidyr)
+library(dplyr)
+library(stringr)
+library(ggplot2)
+library(tidyverse)
+library(leaflet)
+library(htmltools)
+library(maps)
+library(htmlwidgets)
+```
+
+```{r, 0}
+data_viz1 <- data.frame(dataset1$name,dataset1$low_cost,dataset1$high_cost,dataset1$province,dataset1$city,dataset1$lat,
+                  dataset1$long)
+```
+
+```{r, 1}
+
+names(data_viz1)[names(data_viz1) == 'dataset1.name'] <- 'name'
+names(data_viz1)[names(data_viz1) == 'dataset1.low_cost'] <- 'low_cost'
+names(data_viz1)[names(data_viz1) == 'dataset1.high_cost'] <- 'high_cost'
+names(data_viz1)[names(data_viz1) == 'dataset1.province'] <- 'province'
+names(data_viz1)[names(data_viz1) == 'dataset1.city'] <-  'city'
+names(data_viz1)[names(data_viz1) == 'dataset1.lat'] <-  'lat'
+names(data_viz1)[names(data_viz1) == 'dataset1.long'] <-  'long'
+data_viz1$low_cost <- as.numeric(data_viz1$low_cost)
+data_viz1$high_cost <- as.numeric(data_viz1$high_cost)
+ data_viz1 <- data_viz1%>% drop_na(name)
+ data_viz1 <- unique(data_viz1)
+```
+
+
+```{r,2}
+dat <- data_viz1 %>% sample_n(20)
+dat %>% ggplot(aes(x = name, y = low_cost  ))+
+  geom_point()+
+  geom_smooth(method = lm)
+
+``` 
+
+```{r,3}
+data_viz1 %>%
+ggplot(aes(x = province , y = high_cost)) +
+geom_point() +
+geom_smooth(method=lm) +
+xlab("province") +
+ylab("high cost")
+```
+```{r,4}
+data_viz1 <- data_viz1[order(data_viz1$low_cost),]
+data_viz1 <- data_viz1[order(data_viz1$high_cost),]
+data_viz1_matrix <- data.matrix(data_viz1)
+data_viz1_heatmap <- heatmap(data_viz1_matrix, Rowv= NA, Colv= NA, col = heat.colors(256), scale="column", margins=c(10,15))
+
+```
